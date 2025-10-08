@@ -4,7 +4,6 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 export default function ExplicacaoScreen() {
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Explicação dos Cálculos de IRPF</Text>
 
       <View style={styles.section}>
         <Text style={styles.subtitle}>Tabela Vigente (Atual)</Text>

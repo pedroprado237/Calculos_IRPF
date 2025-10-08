@@ -11,7 +11,6 @@ export default function SalariosList() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Calculadora de IRPF</Text>
         <TouchableOpacity
           style={styles.explainButton}
           onPress={() => router.push("/explicacoes")}
@@ -52,7 +51,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
     marginBottom: 16,
   },
