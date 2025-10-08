@@ -6,8 +6,8 @@ export default function Layout() {
   return (
     <SalarioProvider>
       <Tabs>
-        <Tabs.Screen name="index" options={{ title: "Cálculo" }} />
-        <Tabs.Screen name="explicacoes" options={{ title: "Explicações" }} />
+        <Tabs.Screen name="index" options={{ title: "Calculadora de IRPF" }} />
+        <Tabs.Screen name="explicacoes" options={{ title: "Explicação dos Cálculos de IRPF" }} />
       </Tabs>
     </SalarioProvider>
   );
