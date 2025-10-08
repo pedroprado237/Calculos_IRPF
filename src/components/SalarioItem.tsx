@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSalarios, valoresData } from "../context/CalcsProvider";
 
 type Props = {
@@ -8,25 +8,78 @@ type Props = {
 
 export default function SalarioItem({ salario }: Props) {
   const { updateGrade } = useSalarios();
+  const [inputValue, setInputValue] = useState(`R$ ${salario.salario.toFixed(2).replace(".", ",")}`);
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (!isFocused) {
+      setInputValue(`R$ ${salario.salario.toFixed(2).replace(".", ",")}`);
+    }
+  }, [salario.salario, isFocused]);
+
+  const handleSalarioChange = (text: string) => {
+    const digitsOnly = text.replace(/\D/g, "");
+
+    if (digitsOnly === "") {
+      setInputValue("");
+      updateGrade(salario.id, "salario", 0);
+      return;
+    }
+
+    const numericValue = parseInt(digitsOnly) / 100;
+
+    const formatted = `R$ ${numericValue.toFixed(2).replace(".", ",")}`;
+    setInputValue(formatted);
+    updateGrade(salario.id, "salario", numericValue);
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    if (salario.salario === 0) {
+      setInputValue("");
+    }
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+    const numericValue = parseFloat(inputValue.replace(/[^\d.,]/g, "").replace(",", "."));
+    if (!isNaN(numericValue)) {
+      setInputValue(`R$ ${numericValue.toFixed(2).replace(".", ",")}`);
+    } else {
+      setInputValue(`R$ ${salario.salario.toFixed(2).replace(".", ",")}`);
+    }
+  };
+
+  const handleIncrement = () => {
+    const newValue = salario.salario + 100;
+    updateGrade(salario.id, "salario", newValue);
+  };
+
+  const handleDecrement = () => {
+    const newValue = salario.salario - 100;
+    updateGrade(salario.id, "salario", newValue);
+  };
 
   return (
     <View style={styles.row}>
       <View style={styles.cell}>
-        <Text style={styles.cellText}>Caso {salario.id}</Text>
+        <Text style={styles.cellText}>Caso 0{salario.id}</Text>
       </View>
       <View style={styles.cell}>
         <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => updateGrade(salario.id, "salario", salario.salario - 100)}
-          >
+          <TouchableOpacity style={styles.button} onPress={handleDecrement}>
             <Text style={styles.buttonText}>-</Text>
           </TouchableOpacity>
-          <Text style={styles.salarioText}>R$ {salario.salario.toFixed(2)}</Text>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => updateGrade(salario.id, "salario", salario.salario + 100)}
-          >
+          <TextInput
+            style={styles.input}
+            value={inputValue}
+            onChangeText={handleSalarioChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+            keyboardType="numeric"
+            placeholder="R$ 0,00"
+          />
+          <TouchableOpacity style={styles.button} onPress={handleIncrement}>
             <Text style={styles.buttonText}>+</Text>
           </TouchableOpacity>
         </View>
@@ -78,10 +131,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
-  salarioText: {
-    fontSize: 14,
-    fontWeight: "600",
-    minWidth: 80,
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 4,
+    padding: 6,
+    fontSize: 12,
     textAlign: "center",
+    width: 80,
+    backgroundColor: "#fff",
   },
 });
